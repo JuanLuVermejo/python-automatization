@@ -2,7 +2,8 @@
 /01. Analisis de Consumo/
 /Actas/
 /Calidda/
-*.txt
+data.txt
+asure.txt
 *.pdf
 *.zip
 /Pruebas/

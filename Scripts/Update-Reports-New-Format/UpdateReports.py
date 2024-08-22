@@ -90,3 +90,5 @@ archivo_excel = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo\3035430 - 
 # Ejecutar la función y obtener los valores
 (val_total_consumo, rango_celdas, muestra_tipica, tipo_calculo, cuenta_contrato, 
  tiempo_trabajo, dias_trabajo, ultimo_valor) = obtener_valores_y_rango(archivo_excel)
+
+

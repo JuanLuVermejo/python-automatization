@@ -1,0 +1,18 @@
+Sub BuscarObjetivo()
+    Dim ws As Worksheet
+    Dim valorObjetivo As Double
+    Dim valorActual As Double
+
+    ' Referencia a la hoja "Hoja de calculos" en el libro activo
+    Set ws = ActiveWorkbook.Sheets("Hoja de calculos")
+    
+    ' Obtener el valor de la celda A1
+    valorObjetivo = ws.Range("A1").Value
+    
+    ' Usar la herramienta Buscar Objetivo para que el valor de la celda D65 sea igual al valor de la celda A1
+    ws.Range("D65").GoalSeek Goal:=valorObjetivo, ChangingCell:=ws.Range("F21")
+    
+    ' Mostrar un mensaje con el valor final en F21
+    valorActual = ws.Range("F21").Value
+    MsgBox "El valor de la celda F21 ha sido ajustado a: " & valorActual
+End Sub
