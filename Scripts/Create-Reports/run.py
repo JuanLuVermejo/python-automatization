@@ -8,7 +8,7 @@ id_pc = r'C:\Users\juan.vermejo'
 base_ruta = r'Documents\CPNO'
 nube = r'C:\Users\juan.vermejo\OneDrive - ACI PROYECTOS S.A.S. SUCURSAL DEL PERU\Documentos\CPNO - ACI'
 base_ruta_pc = os.path.join(id_pc, base_ruta)
-base_percy_path = os.path.join(nube, 'Mst - Consolidado de Informes.xlsx')
+base_percy_path = os.path.join(base_ruta_pc, 'Mst - Consolidado de Informes (2).xlsx')
 print(base_percy_path)
 macro_file_path = os.path.join(base_ruta_pc, 'Macro - Informes CPNO (NO BORRAR).xlsm')
 base_path = os.path.join(base_ruta_pc, '00. Informes por Analizar')
