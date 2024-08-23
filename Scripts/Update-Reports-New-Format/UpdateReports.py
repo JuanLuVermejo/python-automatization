@@ -1,10 +1,12 @@
 import os
 import xlwings as xw
 import datetime
+from pathlib import Path
 
 def obtener_valores_y_rango(archivo_excel):
     try:
-        wb = xw.Book(archivo_excel)
+        app = xw.App(visible=False)  # Ejecutar Excel en segundo plano
+        wb = app.books.open(archivo_excel)
         hoja = wb.sheets['Hoja de Calculos']
 
         valor_total_consumo = None
@@ -75,21 +77,22 @@ def obtener_valores_y_rango(archivo_excel):
     finally:
         try:
             wb.close()
+            app.quit()
         except UnboundLocalError:
             pass
 
     return (valor_total_consumo, rango_celdas, muestra_tipica_valores, tipo_de_calculo, cuenta_contrato, tiempo_trabajo, dias_trabajo_por_mes, ultimo_valor, medidor_referencia_sap)
 
-def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_consumo, rango_celdas, muestra_tipica_valores, tipo_de_calculo, ultimo_valor, tiempo_trabajo, dias_trabajo_por_mes, medidor_referencia_sap, archivo_original):
+def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_consumo, rango_celdas, muestra_tipica_valores, tipo_de_calculo, ultimo_valor, tiempo_trabajo, dias_trabajo_por_mes, medidor_referencia_sap, archivo_original, macros):
     try:
-        wb_plantilla = xw.Book(archivo_plantilla)
+        wb_plantilla = macros.app.books.open(archivo_plantilla)
         hoja_plantilla = wb_plantilla.sheets['Hoja de Calculos']
 
         # Convertir último valor a formato MM.YYYY
         if isinstance(ultimo_valor, (datetime.datetime, datetime.date)):
             ultimo_valor = ultimo_valor.strftime('%m.%Y')
 
-        hoja_plantilla.range('C2').value = cuenta_contrato
+        hoja_plantilla.range('C2').value = int(cuenta_contrato)
         hoja_plantilla.range('A1').value = valor_total_consumo
         hoja_plantilla.range('C10').value = rango_celdas
         hoja_plantilla.range('C28').value = muestra_tipica_valores[0]
@@ -105,12 +108,20 @@ def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_con
         if not os.path.exists(carpeta_actualizados):
             os.makedirs(carpeta_actualizados)
 
-        nombre_archivo_3 = f"{cuenta_contrato} -{tiempo_trabajo} - Informes CPNO.xlsx"
+        nombre_archivo_3 = f"{int(cuenta_contrato)} - {ultimo_valor} - Informes CPNO.xlsx"
         ruta_archivo_3 = os.path.join(carpeta_actualizados, nombre_archivo_3)
+
+
+        # Ejecutar macros en el archivo de macros
+        macros.macro('BuscarObjetivo')()
+        macros.macro('IteradorCPNO')()
+        print("Macros ejecutadas correctamente.")
+
+        hoja_plantilla.range('A1').value = None
 
         wb_plantilla.save(ruta_archivo_3)
         print(f"Archivo guardado como: {ruta_archivo_3}")
-        
+
     except Exception as e:
         print(f"Error: {e}")
     finally:
@@ -119,16 +130,34 @@ def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_con
         except UnboundLocalError:
             pass
 
-# Ruta del archivo Excel original y de la plantilla
-archivo_excel = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo\3035430 - 05.2024 - Informes CPNO.xlsx'
+def procesar_archivo(archivo_excel, archivo_plantilla, macros):
+    (val_total_consumo, rango_celdas, muestra_tipica, tipo_calculo, cuenta_contrato, 
+     tiempo_trabajo, dias_trabajo, ultimo_valor, medidor_referencia_sap) = obtener_valores_y_rango(archivo_excel)
+
+    insertar_datos_y_guardar(
+        archivo_plantilla, cuenta_contrato, val_total_consumo, rango_celdas, muestra_tipica, 
+        tipo_calculo, ultimo_valor, tiempo_trabajo, dias_trabajo, medidor_referencia_sap, archivo_excel, macros
+    )
+
+def procesar_todos_los_archivos(carpeta_entrada, archivo_plantilla):
+    archivos_excel = [f for f in Path(carpeta_entrada).glob('*.xlsx') if 'Plantilla' not in f.name]
+    
+    # Abrir el archivo de macros una vez
+    app_macros = xw.App(visible=False)  # Ejecutar Excel en segundo plano
+    wb_macros = app_macros.books.open(r"C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Macro - Buscar Objetivo Ajuste CPNO.xlsm")
+    
+    try:
+        for archivo in archivos_excel:
+            procesar_archivo(archivo, archivo_plantilla, wb_macros)
+
+    finally:
+        wb_macros.close()
+        app_macros.quit()
+        print("Archivo de macros cerrado.")
+
+# Ruta de la carpeta de entrada y de la plantilla
+carpeta_entrada = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo'
 archivo_plantilla = r"C:\Users\juan.vermejo\Documents\CPNO\Plantilla - Informes CPNO.xlsx"
 
-# Obtener los valores del archivo original
-(val_total_consumo, rango_celdas, muestra_tipica, tipo_calculo, cuenta_contrato, 
- tiempo_trabajo, dias_trabajo, ultimo_valor, medidor_referencia_sap) = obtener_valores_y_rango(archivo_excel)
-
-# Insertar los valores en la plantilla y guardar el archivo actualizado
-insertar_datos_y_guardar(
-    archivo_plantilla, cuenta_contrato, val_total_consumo, rango_celdas, muestra_tipica, 
-    tipo_calculo, ultimo_valor, tiempo_trabajo, dias_trabajo, medidor_referencia_sap, archivo_excel
-)
+# Procesar todos los archivos en la carpeta
+procesar_todos_los_archivos(carpeta_entrada, archivo_plantilla)
