@@ -1,4 +1,4 @@
-Sub BuscarObjetivo()
+Sub Potencia()
     Dim ws As Worksheet
     Dim valorObjetivo As Double
     Dim valorActual As Double
@@ -14,5 +14,85 @@ Sub BuscarObjetivo()
     
     ' Mostrar un mensaje con el valor final en F21
     valorActual = ws.Range("F21").Value
-    MsgBox "El valor de la celda F21 ha sido ajustado a: " & valorActual
+End Sub
+Sub IteradorCPNO()
+    Dim criterio As String
+    Dim wsHojaCalculos As Worksheet
+
+    ' Establece la referencia a la hoja "Hoja de Calculos" en el libro activo.
+    Set wsHojaCalculos = ActiveWorkbook.Sheets("Hoja de Calculos")
+
+    ' Obtener el valor de la celda C2 en la hoja "Hoja de Calculos".
+    criterio = wsHojaCalculos.Range("C2").Value
+
+    ' Asegurarse de que la celda C2 no esté vacía para proceder con las operaciones.
+    If criterio = "" Then
+        MsgBox "La celda C2 está vacía", vbExclamation
+        Exit Sub ' Sale de la subrutina si el criterio está vacío.
+    End If
+
+    ' Llama a la subrutina para la hoja "BD" en el libro activo y pasa el criterio.
+    DeleteVisibleRowsFromTable "BD", "BD", criterio
+
+    ' Aquí podrías continuar con otras operaciones que tu macro necesite realizar.
+End Sub
+
+Sub DeleteVisibleRowsFromTable(sheetName As String, tableName As String, criteria As String)
+    Dim tbl As ListObject
+    Dim rng As Range
+
+    ' Mejora el rendimiento desactivando actualizaciones y alertas temporales.
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+    Application.DisplayAlerts = False
+
+    ' Establece la tabla especificada en la hoja dada del libro activo.
+    Set tbl = ActiveWorkbook.Sheets(sheetName).ListObjects(tableName)
+
+    ' Aplica el filtro a la tabla para ocultar las filas que no coinciden con el criterio.
+    tbl.Range.AutoFilter Field:=1, Criteria1:="<>" & criteria
+
+    ' Intenta encontrar las filas visibles (no filtradas) y las establece en un rango.
+    On Error Resume Next
+    Set rng = tbl.DataBodyRange.SpecialCells(xlCellTypeVisible)
+    On Error GoTo 0 ' Restablece el manejo normal de errores.
+
+    ' Si se encontraron filas visibles, elimina esas filas.
+    If Not rng Is Nothing Then
+        rng.Delete
+    End If
+
+    ' Quita el filtro de la tabla para mostrar todas las filas de nuevo.
+    If tbl.AutoFilter.FilterMode Then
+        tbl.AutoFilter.ShowAllData
+    End If
+
+    ' Restaura las configuraciones de Excel para mostrar actualizaciones y alertas.
+    Application.DisplayAlerts = True
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+End Sub
+
+Sub Historico()
+    ActiveWindow.SmallScroll Down:=18
+    Range("M49").Select
+    ActiveWindow.SmallScroll Down:=6
+    Range("F54").Select
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Application.CutCopyMode = False
+    Sheets("BDPercy").Select
+    Range("BDPercy[Total Consumo]").Select
+    Application.CutCopyMode = False
+    Application.CutCopyMode = False
+    Application.CutCopyMode = False
+    ' Cambiar el objetivo a la celda A1 de la hoja "Hoja de Calculos"
+    Range("BDPercy[Total Consumo]").GoalSeek Goal:=Sheets("Hoja de Calculos").Range("A1").Value, ChangingCell:=Sheets( _
+        "Hoja de Calculos").Range("F54")
+    
+    Sheets("Hoja de Calculos").Select
+    
+    Range("A1").Select
+    
 End Sub

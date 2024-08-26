@@ -99,8 +99,8 @@ def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_con
         hoja_plantilla.range('D28').value = muestra_tipica_valores[1]
         hoja_plantilla.range('T2').value = tipo_de_calculo
         hoja_plantilla.range('W2').value = ultimo_valor
-        hoja_plantilla.range('F10').value = tiempo_trabajo
-        hoja_plantilla.range('F11').value = dias_trabajo_por_mes
+        hoja_plantilla.range('F19').value = tiempo_trabajo
+        hoja_plantilla.range('F20').value = dias_trabajo_por_mes
         hoja_plantilla.range('P2').value = medidor_referencia_sap
 
         carpeta_original = os.path.dirname(archivo_original)
@@ -113,7 +113,10 @@ def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_con
 
 
         # Ejecutar macros en el archivo de macros
-        macros.macro('BuscarObjetivo')()
+        if tipo_de_calculo == "POTENCIA":
+            macros.macro('Potencia')()
+        elif tipo_de_calculo == "HISTORICO":
+            macros.macro('Historico')()
         macros.macro('IteradorCPNO')()
         print("Macros ejecutadas correctamente.")
 
