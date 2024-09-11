@@ -116,7 +116,7 @@ def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_con
         hoja_plantilla.range('F20').value = dias_trabajo_por_mes
         hoja_plantilla.range('P2').value = medidor_referencia_sap
 
-        hoja_legal.range('B1').value = f"Informe de CPNO N° CPNO-{cod_cpno}-{int(cuenta_contrato)} \n(Actualización del  anexo - Calculo de la afectación económica)"
+        hoja_legal.range('B1').value = f"Informe de CPNO N° CPNO_{cod_cpno}_{int(cuenta_contrato)} \n(Actualización del Anexo - Calculo de la afectación económica)"
 
         carpeta_original = os.path.dirname(archivo_original)
         carpeta_actualizados = os.path.join(carpeta_original, 'Actualizados')
