@@ -92,7 +92,7 @@ def process_folder(folder_path, output_file):
         print("No se encontraron archivos con las hojas necesarias.")
 
 # Ejemplo de uso
-folder_path = r'C:\Users\juan.vermejo\Gas Natural de Lima y Callao S.A. (GNLC)\Santiago Santa Cruz Montañez - Informes'
+folder_path = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo\Comedores Populares'
 # folder_path = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo'
-output_file = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo\Mst - Potencias Registradas.xlsx'
+output_file = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo\Resultados\Mst - Potencias Registradas (Comedores Populares).xlsx'
 process_folder(folder_path, output_file)

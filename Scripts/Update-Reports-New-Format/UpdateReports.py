@@ -3,6 +3,11 @@ import xlwings as xw
 import datetime
 from pathlib import Path
 import pandas as pd
+import argparse
+
+parser = argparse.ArgumentParser(description="Actualizar Informes nuevo formato")
+parser.add_argument("--type", type=str, help="Tipo de analisis a actualizar legal o comercial", default="Legal")
+args = parser.parse_args()
 
 def obtener_valores_y_rango(archivo_excel):
     try:
@@ -86,17 +91,18 @@ def obtener_valores_y_rango(archivo_excel):
 
 def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_consumo, rango_celdas, muestra_tipica_valores, tipo_de_calculo, ultimo_valor, tiempo_trabajo, dias_trabajo_por_mes, medidor_referencia_sap, archivo_original, macros):
     try:
+        
+        if args.type == "Legal":
+            cod_cpno = ""
 
-        cod_cpno = ""
+            for cc in cuentas_legal:
+                if int(cc[0]) == int(cuenta_contrato):
+                    cod_cpno = cc[1]
 
-        for cc in cuentas_legal:
-            if int(cc[0]) == int(cuenta_contrato):
-                cod_cpno = cc[1]
-
-        if cod_cpno == "":
-            print("=============================================================")
-            print(f'Afectación económica {cuenta_contrato} no está en base legal')
-            print("=============================================================")
+            if cod_cpno == "":
+                print("=============================================================")
+                print(f'Afectación económica {cuenta_contrato} no está en base legal')
+                print("=============================================================")
 
         wb_plantilla = macros.app.books.open(archivo_plantilla)
         hoja_plantilla = wb_plantilla.sheets['Hoja de Calculos']
@@ -116,7 +122,8 @@ def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_con
         hoja_plantilla.range('F20').value = dias_trabajo_por_mes
         hoja_plantilla.range('P2').value = medidor_referencia_sap
 
-        hoja_legal.range('B1').value = f"Informe de CPNO N° CPNO_{cod_cpno}_{int(cuenta_contrato)} \n(Actualización del Anexo - Calculo de la afectación económica)"
+        if args.type == "Legal":
+            hoja_legal.range('B1').value = f"Informe de CPNO N° CPNO_{cod_cpno}_{int(cuenta_contrato)} \n(Actualización del Anexo - Calculo de la afectación económica)"
 
         carpeta_original = os.path.dirname(archivo_original)
         carpeta_actualizados = os.path.join(carpeta_original, 'Actualizados')
@@ -175,7 +182,11 @@ def procesar_todos_los_archivos(carpeta_entrada, archivo_plantilla):
 
 # Rutas de la carpeta de entrada y de la plantilla
 carpeta_entrada = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo'
-archivo_plantilla = r"C:\Users\juan.vermejo\Documents\CPNO\Plantilla - Informes CPNO - Actualizacion Legal.xlsx"
+
+if args.type == "Legal":
+    archivo_plantilla = r"C:\Users\juan.vermejo\Documents\CPNO\Plantilla - Informes CPNO - Actualizacion Legal.xlsx"
+elif args.type == "Comercial":
+    archivo_plantilla = r"C:\Users\juan.vermejo\Documents\CPNO\Plantilla - Informes CPNO.xlsx"
 archivo_legal = r"C:\Users\juan.vermejo\Documents\CPNO\Resumen de casos_legal.xlsx"
 
 #Cruce con legal
