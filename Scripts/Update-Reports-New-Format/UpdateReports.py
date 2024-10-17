@@ -135,10 +135,11 @@ def insertar_datos_y_guardar(archivo_plantilla, cuenta_contrato, valor_total_con
 
 
         # Ejecutar macros en el archivo de macros
-        # if tipo_de_calculo == "POTENCIA":
-        #     macros.macro('Potencia')()
-        # elif tipo_de_calculo == "HISTORICO":
-        #     macros.macro('Historico')()
+        # if args.type == "Legal":
+        #     if tipo_de_calculo == "POTENCIA":
+        #         macros.macro('Potencia')()
+        #     elif tipo_de_calculo == "HISTORICO":
+        #         macros.macro('Historico')()
         macros.macro('IteradorCPNO')()
         print("Macros ejecutadas correctamente.")
 
@@ -169,7 +170,7 @@ def procesar_todos_los_archivos(carpeta_entrada, archivo_plantilla):
     
     # Abrir el archivo de macros una vez
     app_macros = xw.App(visible=False)  # Ejecutar Excel en segundo plano
-    wb_macros = app_macros.books.open(r"C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Macro - Buscar Objetivo Ajuste CPNO.xlsm")
+    wb_macros = app_macros.books.open(r"C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Copia de Macro - Buscar Objetivo Ajuste CPNO.xlsm")
     
     try:
         for archivo in archivos_excel:
@@ -184,7 +185,7 @@ def procesar_todos_los_archivos(carpeta_entrada, archivo_plantilla):
 carpeta_entrada = r'C:\Users\juan.vermejo\Documents\CPNO\Pruebas\Masivo'
 
 if args.type == "Legal":
-    archivo_plantilla = r"C:\Users\juan.vermejo\Documents\CPNO\Plantilla - Informes CPNO - Actualizacion Legal.xlsx"
+    archivo_plantilla = r"C:\Users\juan.vermejo\Documents\CPNO\Plantilla - Informes CPNO Legal.xlsx"
 elif args.type == "Comercial":
     archivo_plantilla = r"C:\Users\juan.vermejo\Documents\CPNO\Plantilla - Informes CPNO.xlsx"
 archivo_legal = r"C:\Users\juan.vermejo\Documents\CPNO\Resumen de casos_legal.xlsx"
