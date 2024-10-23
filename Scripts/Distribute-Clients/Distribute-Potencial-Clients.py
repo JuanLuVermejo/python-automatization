@@ -11,7 +11,7 @@ df = pd.read_excel(archivo_excel, sheet_name="Cruce")
 
 # Filtrar los registros que tienen FALSO en la columna "Cerrado con Deposito?"
 df_filtrado = df[df['Cerrado con Deposito?'] == False]
-# df_filtrado = df[df['Esta en agenda IBR?'] == False]
+df_filtrado = df[df['Esta en agenda IBR?'] == False]
 df_filtrado = df[df['Estatus Gestión Comercial'] != "Se firmó acuerdo"]
 
 
