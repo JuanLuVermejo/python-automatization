@@ -9,7 +9,7 @@ base_ruta = r'Documents\CPNO'
 nube = r'C:\Users\juan.vermejo\OneDrive - ACI PROYECTOS S.A.S. SUCURSAL DEL PERU\Documentos\CPNO - ACI'
 nube_calidda = r'C:\Users\juan.vermejo\OneDrive - Gas Natural de Lima y Callao S.A. (GNLC)\Reporteria\12. CPNO\00. Iterador de Informes'
 base_ruta_pc = os.path.join(id_pc, base_ruta)
-base_percy_path = os.path.join(nube_calidda, 'Mst - Consolidado de Informes.xlsx')
+base_percy_path = os.path.join(nube_calidda, 'Mst - Consolidado de Informes - Rev2.xlsx')
 print(base_percy_path)
 macro_file_path = os.path.join(base_ruta_pc, 'Macro - Informes CPNO (NO BORRAR).xlsm')
 base_path = os.path.join(base_ruta_pc, '00. Informes por Analizar')
